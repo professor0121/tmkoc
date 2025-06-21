@@ -1,15 +1,12 @@
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
+import { JwtPayload } from "../types/jwt.paylod";
 
 config();
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
-interface JwtPayload {
-  email: string;
-}
-
-export const signToken = (payload: JwtPayload): string => {
+export const signToken = (payload: Partial<JwtPayload>): string => {
   return jwt.sign(payload, JWT_SECRET, {
     expiresIn: "7d",
   });

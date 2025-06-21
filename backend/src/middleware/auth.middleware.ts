@@ -1,32 +1,224 @@
+import { Request, Response, NextFunction } from "express";
+import { cookieName } from "../config/cookieConfig";
+import { verifyToken } from "../utils/helper";
+import { findUserByEmail } from "../dao/user.dao";
+import { JwtPayload, User } from "../types/jwt.paylod";
+import { IUser } from "../models/User";
 
-import { Request, Response, NextFunction } from 'express';
-import { cookieName } from '../config/cookieConfig';
-import { verifyToken } from '../utils/helper';
-import { findUserByEmail } from '../dao/user.dao';
-
-export const checkRole = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const token= req.cookies[cookieName];
-        if (!token) {
-            throw new Error("Not authenticated");
-        }
-        const decoded = await import('../utils/helper').then(m => m.verifyToken(token));
-        if (!decoded || !decoded.email) {
-            throw new Error("Not authenticated");
-        }
-        const user = await import('../dao/user.dao').then(m => m.findUserByEmail(decoded.email));
-        if (!user) {
-            throw new Error("Not authenticated");
-        }
-        if (user.role !== req.params.role) {
-            throw new Error("Forbidden");
-        }
-        next();
-    } catch (error: any) {
-        res.status(403).json({
-            success: false,
-            message: "Forbidden",
-            error: error.message
-        });
+// Extend Express Request type to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: IUser;
     }
+  }
 }
+
+/**
+ * Basic authentication middleware
+ * Verifies JWT token and attaches user to request
+ */
+export const authMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const token = req.cookies?.[cookieName];
+
+    if (!token) {
+      res.status(401).json({
+        success: false,
+        message: "Access token required"
+      });
+      return;
+    }
+
+    const decoded = verifyToken(token) as JwtPayload;
+
+    if (!decoded?.email) {
+      res.status(401).json({
+        success: false,
+        message: "Invalid token"
+      });
+      return;
+    }
+
+    const user = await findUserByEmail(decoded.email) as IUser;
+
+    if (!user) {
+      res.status(401).json({
+        success: false,
+        message: "User not found"
+      });
+      return;
+    }
+
+    // Attach user to request (excluding password)
+    req.user = user;
+
+    next();
+  } catch (error: any) {
+    res.status(401).json({
+      success: false,
+      message: "Invalid token",
+      error: error.message
+    });
+  }
+};
+
+// /**
+//  * Role-based access control middleware
+//  * Requires authentication first, then checks user role
+//  */
+export const checkRole = (requiredRole: string) => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const token = req.cookies?.[cookieName];
+
+      if (!token) {
+        res.status(401).json({
+          success: false,
+          message: "Access token required"
+        });
+        return;
+      }
+
+      const decoded = verifyToken(token) as JwtPayload;
+
+      if (!decoded?.email) {
+        res.status(401).json({
+          success: false,
+          message: "Invalid token"
+        });
+        return;
+      }
+
+      const user = await findUserByEmail(decoded.email) as IUser;
+
+      if (!user) {
+        res.status(401).json({
+          success: false,
+          message: "User not found"
+        });
+        return;
+      }
+
+      if (user.role !== requiredRole) {
+        res.status(403).json({
+          success: false,
+          message: `Access denied. Required role: ${requiredRole}`
+        });
+        return;
+      }
+
+      // Attach user to request (excluding password)
+      req.user = user;
+
+      next();
+    } catch (error: any) {
+      res.status(401).json({
+        success: false,
+        message: "Authentication failed",
+        error: error.message
+      });
+    }
+  };
+};
+
+// /**
+//  * Multiple roles access control middleware
+//  * Allows access if user has any of the specified roles
+//  */
+export const checkRoles = (allowedRoles: string[]) => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const token = req.cookies?.[cookieName];
+
+      if (!token) {
+        res.status(401).json({
+          success: false,
+          message: "Access token required"
+        });
+        return;
+      }
+
+      const decoded = verifyToken(token) as JwtPayload;
+
+      if (!decoded?.email) {
+        res.status(401).json({
+          success: false,
+          message: "Invalid token"
+        });
+        return;
+      }
+
+      const user = await findUserByEmail(decoded.email) as IUser;
+
+      if (!user) {
+        res.status(401).json({
+          success: false,
+          message: "User not found"
+        });
+        return;
+      }
+
+      if (!allowedRoles.includes(user.role)) {
+        res.status(403).json({
+          success: false,
+          message: `Access denied. Required roles: ${allowedRoles.join(", ")}`
+        });
+        return;
+      }
+
+      // Attach user to request (excluding password)
+      req.user =user;
+
+      next();
+    } catch (error: any) {
+      res.status(401).json({
+        success: false,
+        message: "Authentication failed",
+        error: error.message
+      });
+    }
+  };
+};
+
+// /**
+//  * Optional authentication middleware
+//  * Attaches user to request if token is valid, but doesn't require authentication
+//  */
+export const optionalAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const token = req.cookies?.[cookieName];
+
+    if (!token) {
+      next();
+      return;
+    }
+
+    const decoded = verifyToken(token) as JwtPayload;
+
+    if (!decoded?.email) {
+      next();
+      return;
+    }
+
+    const user = await findUserByEmail(decoded.email) as IUser;
+
+    if (user) {
+      // Attach user to request (excluding password)
+      req.user =user;
+    }
+
+    next();
+  } catch (error) {
+    // If token is invalid, just continue without user
+    next();
+  }
+};

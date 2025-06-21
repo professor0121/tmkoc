@@ -48,3 +48,34 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     }
 }
 
+export const logout = (req: Request, res: Response) => {
+    try {
+        res.clearCookie(cookieName, cookieOptions);
+        res.status(200).json({
+            success: true,
+            message: "User logged out successfully"
+        });
+    } catch (error: any) {
+        res.status(400).json({
+            success: false,
+            message: "Error logging out user",
+            error: error.message
+        });
+    }
+}
+
+export const profile = (req: Request, res: Response, next: NextFunction): void => {
+    try {
+        res.status(200).json({
+            success: true,
+            message: "User profile",
+            user: req.user
+        });
+    } catch (error: any) {
+        res.status(400).json({
+            success: false,
+            message: "Error fetching user profile",
+            error: error.message
+        });
+    }
+}
