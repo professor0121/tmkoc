@@ -1,0 +1,50 @@
+import { Request, Response, NextFunction } from 'express';
+import { registerUser,loginUser } from '../services/auth.services';
+import { cookieName, cookieOptions } from '../config/cookieConfig';
+import { signToken } from '../utils/helper';
+
+
+export const register = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { name, email, password, role } = req.body;
+        console.log("Registering user:", { name, email,password,role});
+        const {newUser, token} = await registerUser(name, email, password, role);
+        res.cookie(cookieName, token, cookieOptions);
+        res.status(201).json({
+            newUser,
+            success: true,
+            message: "User registered successfully"
+        });
+    } catch (error: any) {
+        res.status(400).json({
+            success: false,
+            message: "Error registering user",
+            error: error.message
+        });
+    }
+}
+
+export const login = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email, password } = req.body;
+        console.log("Login request received:", { email, password });
+        console.log("Logging in user:", { email });
+        const {user, token} = await loginUser(email, password);
+        if (!user) {
+            throw new Error("Invalid credentials");
+        }
+        res.cookie(cookieName, token, cookieOptions);
+        res.status(200).json({
+            user,
+            success: true,
+            message: "User logged in successfully"
+        });
+    } catch (error: any) {
+        res.status(400).json({
+            success: false,
+            message: "Error logging in user",
+            error: error.message
+        });
+    }
+}
+
