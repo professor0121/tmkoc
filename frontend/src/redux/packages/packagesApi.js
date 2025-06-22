@@ -1,18 +1,35 @@
-// src/redux/auth/authAPI.js
-import axiosInstance from '../../axios/axiosInstance';
+// src/redux/packages/packagesApi.js
+import axiosInstance from '../../axios/axiosInstance'
 
-export const loginAPI = async (userData) => {
-  const res = await axiosInstance.post('/auth/login', userData);
-  console.log(res)
-  return res.data.user;
+// 🆕 Add a package
+export const createPackageAPI = async (data) => {
+    console.log(data)
+  const res = await axiosInstance.post('/packages', data);
+  console.log("respon sof opackage",res.data)
+  return res.data;
 };
 
-export const registerAPI = async (userData) => {
-  const res = await axiosInstance.post('/auth/register', userData);
-  return res.data.user;
+// 📦 Get all packages
+export const fetchPackagesAPI = async () => {
+  const res = await axiosInstance.get('/packages');
+  console.log(res.data)
+  return res.data;
 };
 
-export const meAPI =async () => {
-  const res = await axiosInstance.get('/auth/me');
-  return res.data.user;
-}
+// 🧾 Get a single package
+export const fetchPackageByIdAPI = async (id) => {
+  const res = await axiosInstance.get(`/packages/${id}`);
+  return res.data;
+};
+
+// ✏️ Update a package
+export const updatePackageAPI = async ({ id, data }) => {
+  const res = await axiosInstance.put(`/packages/${id}`, data);
+  return res.data;
+};
+
+// ❌ Delete a package
+export const deletePackageAPI = async (id) => {
+  const res = await axiosInstance.delete(`/packages/${id}`);
+  return res.data;
+};

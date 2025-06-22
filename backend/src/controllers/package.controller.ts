@@ -27,20 +27,24 @@ import {
  */
 export const createNewPackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    // console.log("req.body in createNewPackage", req);
     const packageData = {
       ...req.body,
       createdBy: req.user?.id,
       updatedBy: req.user?.id
     };
+    // console.log("packageData in createNewPackage", packageData);
 
     const newPackage = await createPackage(packageData);
-
+    console.log("dsdsdsdsds0",newPackage)
+    console.log("dsdsdsdsds1",newPackage._id)
     res.status(201).json({
       success: true,
       message: "Package created successfully",
       data: newPackage
     });
   } catch (error: any) {
+    console.log("error in createNewPackage", error);
     res.status(400).json({
       success: false,
       message: "Error creating package",

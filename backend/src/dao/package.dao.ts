@@ -5,8 +5,11 @@ import mongoose from "mongoose";
  * Create a new package
  */
 export const createPackage = async (packageData: Partial<IPackage>): Promise<IPackage> => {
+  console.log("packageData in createPackage", packageData);
   const newPackage = new Package(packageData);
-  return await newPackage.save();
+  console.log("newpackeagd",newPackage)
+  await newPackage.save();
+  return newPackage;
 };
 
 /**

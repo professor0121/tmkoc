@@ -53,11 +53,11 @@ export interface IPackage extends Document {
     currentBookings: number;
   }[];
   features: string[];
-  transportation: {
-    included: boolean;
-    type: string[];
-    details: string;
-  };
+  // transportation: {
+  //   included: boolean;
+  //   type: string[];
+  //   details: string;
+  // };
   accommodation: {
     type: string;
     rating: number;

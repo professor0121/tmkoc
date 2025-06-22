@@ -35,7 +35,7 @@ export const authMiddleware = async (
     }
 
     const decoded = verifyToken(token) as JwtPayload;
-
+    console.log("decoded token", decoded)
     if (!decoded?.email) {
       res.status(401).json({
         success: false,
@@ -59,6 +59,7 @@ export const authMiddleware = async (
 
     next();
   } catch (error: any) {
+    console.log(error)
     res.status(401).json({
       success: false,
       message: "Invalid token",
@@ -75,7 +76,7 @@ export const checkRole = (requiredRole: string) => {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const token = req.cookies?.[cookieName];
-
+      console.log(token)
       if (!token) {
         res.status(401).json({
           success: false,
@@ -85,7 +86,7 @@ export const checkRole = (requiredRole: string) => {
       }
 
       const decoded = verifyToken(token) as JwtPayload;
-
+      console.log(decoded)
       if (!decoded?.email) {
         res.status(401).json({
           success: false,
