@@ -6,6 +6,8 @@ import packageRoutes from "./routes/package.routes";
 import cors from "cors";
 import {corsOptions} from "./config/corsPolicy.js";
 import cookieParser from "cookie-parser";
+import destinationRoutes from "./routes/destination.routes";
+
 // Load environment variables
 dotenv.config();
 
@@ -35,6 +37,7 @@ app.use("/api/auth", authRoutes);
 
 // Package routes
 app.use("/api/packages", packageRoutes);
+app.use("/api/destinations", destinationRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);

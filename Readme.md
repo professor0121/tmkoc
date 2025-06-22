@@ -1,15 +1,30 @@
-# TMKOC Backend API
+# TMKOC Tourism Management System
 
-A robust Node.js/Express.js backend application built with TypeScript, featuring JWT authentication, role-based access control, and MongoDB integration.
+A comprehensive full-stack tourism management application built with modern technologies, featuring a robust Node.js/Express.js backend with TypeScript and a React.js frontend with Redux.
 
 ## 🚀 Features
 
+### Backend Features
 - **Authentication System**: JWT-based authentication with secure HTTP-only cookies
 - **Role-Based Access Control**: Admin and user role management
+- **Package Management**: Complete CRUD operations for travel packages
+- **Destination Management**: Comprehensive destination database with reviews and ratings
+- **Advanced Search**: Full-text search with filters and geospatial queries
+- **Review System**: User reviews and ratings for destinations and packages
+- **Analytics**: Statistics and insights for business intelligence
 - **Security**: Password hashing, input validation, and CSRF protection
-- **Database**: MongoDB with Mongoose ODM
+- **Database**: MongoDB with Mongoose ODM and optimized indexing
 - **TypeScript**: Full TypeScript support for type safety
 - **Modular Architecture**: Clean separation of concerns with layered architecture
+
+### Frontend Features
+- **Modern React**: Built with React 18 and modern hooks
+- **State Management**: Redux Toolkit for efficient state management
+- **Authentication**: Complete auth system with protected routes
+- **Responsive Design**: Mobile-first responsive design
+- **Route Protection**: Role-based route protection and navigation guards
+- **Error Handling**: Comprehensive error boundaries and loading states
+- **Performance**: Lazy loading and code splitting for optimal performance
 
 ## 📋 Table of Contents
 
@@ -17,9 +32,12 @@ A robust Node.js/Express.js backend application built with TypeScript, featuring
 - [Project Structure](#project-structure)
 - [API Endpoints](#api-endpoints)
 - [Authentication](#authentication)
+- [Database Models](#database-models)
 - [Environment Variables](#environment-variables)
 - [Development](#development)
 - [Documentation](#documentation)
+- [Frontend Setup](#frontend-setup)
+- [API Documentation](#api-documentation)
 
 ## 🏃‍♂️ Quick Start
 
@@ -67,29 +85,48 @@ A robust Node.js/Express.js backend application built with TypeScript, featuring
 ## 📁 Project Structure
 
 ```
-backend/
-├── src/
-│   ├── config/              # Configuration files
-│   │   ├── database.ts      # MongoDB connection setup
-│   │   └── cookieConfig.ts  # Cookie configuration
-│   ├── controllers/         # Request handlers
-│   │   └── auth.controller.ts
-│   ├── dao/                 # Data Access Objects
-│   │   └── user.dao.ts
-│   ├── middleware/          # Custom middleware
-│   │   └── auth.middleware.ts
-│   ├── models/              # Database models
-│   │   └── User.ts
-│   ├── routes/              # API routes
-│   │   └── auth.routes.ts
-│   ├── services/            # Business logic
-│   │   └── auth.services.ts
-│   ├── utils/               # Utility functions
-│   │   └── helper.ts
-│   └── index.ts             # Application entry point
-├── package.json
-├── tsconfig.json
-└── test-api.js              # API testing script
+tmkoc/
+├── backend/                 # Node.js/Express.js backend
+│   ├── src/
+│   │   ├── config/          # Configuration files
+│   │   │   ├── database.ts  # MongoDB connection setup
+│   │   │   └── cookieConfig.ts
+│   │   ├── controllers/     # Request handlers
+│   │   │   ├── auth.controller.ts
+│   │   │   ├── package.controller.ts
+│   │   │   └── destination.controller.ts
+│   │   ├── dao/             # Data Access Objects
+│   │   │   ├── user.dao.ts
+│   │   │   ├── package.dao.ts
+│   │   │   └── destination.dao.ts
+│   │   ├── middleware/      # Custom middleware
+│   │   │   └── auth.middleware.ts
+│   │   ├── models/          # Database models
+│   │   │   ├── User.ts
+│   │   │   ├── Package.ts
+│   │   │   └── Destination.ts
+│   │   ├── routes/          # API routes
+│   │   │   ├── auth.routes.ts
+│   │   │   ├── package.routes.ts
+│   │   │   └── destination.routes.ts
+│   │   ├── services/        # Business logic
+│   │   │   ├── auth.services.ts
+│   │   │   ├── package.service.ts
+│   │   │   └── destination.service.ts
+│   │   ├── utils/           # Utility functions
+│   │   └── index.ts         # Application entry point
+│   ├── API_DOCUMENTATION.md # Complete API documentation
+│   └── README.md            # Backend-specific documentation
+├── frontend/                # React.js frontend
+│   ├── src/
+│   │   ├── components/      # Reusable components
+│   │   ├── pages/           # Page components
+│   │   ├── redux/           # Redux store and slices
+│   │   ├── router/          # React Router configuration
+│   │   ├── api/             # API integration
+│   │   └── App.jsx          # Main App component
+│   └── README.md            # Frontend-specific documentation
+└── README.md                # Main project documentation
 ```
 
 ## 🔌 API Endpoints
