@@ -7,6 +7,8 @@ const Sidebar = () => {
         {path:'/admin/users',name:'Manage Users'},
         {path:'/admin/settings',name:'Settings'},
         {path:'/admin/packages',name:'Packages'},
+        {path:'/admin/destinations',name:'Destinations List'},
+        {path:'/admin/dash',name:'Destination Dashboard'}
     ]
     return (
         <div>

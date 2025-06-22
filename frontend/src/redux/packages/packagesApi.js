@@ -12,8 +12,8 @@ export const createPackageAPI = async (data) => {
 // 📦 Get all packages
 export const fetchPackagesAPI = async () => {
   const res = await axiosInstance.get('/packages');
-  console.log(res.data)
-  return res.data;
+  // console.log(res.data.data.packages)
+  return res.data.data.packages;
 };
 
 // 🧾 Get a single package

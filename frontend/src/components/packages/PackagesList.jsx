@@ -13,12 +13,12 @@ const PackagesList = () => {
 
   if (loading) return <p className="text-center text-blue-600">Loading packages...</p>;
   if (error) return <p className="text-center text-red-600">Error: {error}</p>;
-console.log(packages.data.packages)
+// console.log(packages.data.packages)
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Available Packages</h2>
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {packages.data.packages.map((pkg) => (
+        {packages.map((pkg) => (
           <div
             key={pkg._id}
             className="bg-white shadow-md p-4 rounded-lg border border-gray-100 hover:shadow-lg transition"
