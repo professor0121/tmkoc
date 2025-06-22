@@ -25,7 +25,7 @@ export const authMiddleware = async (
 ): Promise<void> => {
   try {
     const token = req.cookies?.[cookieName];
-
+    console.log("auth tokne from teh cookie", token)
     if (!token) {
       res.status(401).json({
         success: false,
