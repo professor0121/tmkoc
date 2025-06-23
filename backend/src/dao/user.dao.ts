@@ -19,3 +19,6 @@ export const createUser = async (name:string, email:string, password:string,role
     return createdNewUser
 }
 
+export const getAllUsers = async () => {
+    return await User.find()
+}

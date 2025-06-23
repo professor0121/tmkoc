@@ -1,4 +1,4 @@
-import { createUser, findUserByEmailByPassword } from '../dao/user.dao';
+import { createUser, findUserByEmailByPassword,getAllUsers } from '../dao/user.dao';
 import { signToken } from '../utils/helper';
 
 export const registerUser = async (name: string, email: string, password: string, role: string) => {
@@ -26,6 +26,15 @@ export const loginUser = async (email: string, password: string) => {
         }
         const token = signToken({ email: user.email });
         return { user, token };
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+export const getAllUsersServices = async () => {
+    try {
+        const users = await getAllUsers();
+        return users;
     } catch (error: any) {
         throw new Error(error.message);
     }

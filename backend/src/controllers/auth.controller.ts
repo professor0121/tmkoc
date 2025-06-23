@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { registerUser,loginUser } from '../services/auth.services';
+import { registerUser,loginUser ,getAllUsersServices} from '../services/auth.services';
 import { cookieName, cookieOptions } from '../config/cookieConfig';
 import { signToken } from '../utils/helper';
 
@@ -7,7 +7,7 @@ import { signToken } from '../utils/helper';
 export const register = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { name, email, password, role } = req.body;
-        console.log("Registering user:", { name, email,password,role});
+        // console.log("Registering user:", { name, email,password,role});
         const {newUser, token} = await registerUser(name, email, password, role);
         res.cookie(cookieName, token, cookieOptions);
         res.status(201).json({
@@ -75,6 +75,23 @@ export const profile = (req: Request, res: Response, next: NextFunction): void =
         res.status(400).json({
             success: false,
             message: "Error fetching user profile",
+            error: error.message
+        });
+    }
+}
+
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const users = await getAllUsersServices();
+        res.status(200).json({
+            success: true,
+            message: "Users retrieved successfully",
+            data: users
+        });
+    } catch (error: any) {
+        res.status(400).json({
+            success: false,
+            message: "Error fetching users",
             error: error.message
         });
     }

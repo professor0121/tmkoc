@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/database.js";
 import authRoutes from "./routes/auth.routes";
 import packageRoutes from "./routes/package.routes";
+import bookingRoutes from "./routes/booking.routes";
 import cors from "cors";
 import {corsOptions} from "./config/corsPolicy.js";
 import cookieParser from "cookie-parser";
@@ -38,6 +39,7 @@ app.use("/api/auth", authRoutes);
 // Package routes
 app.use("/api/packages", packageRoutes);
 app.use("/api/destinations", destinationRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
