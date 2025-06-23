@@ -4,11 +4,13 @@ import { NavLink } from 'react-router-dom';
 const Sidebar = () => {
     const menuItems=[
         {path:'/admin/dashboard',name:'Dashboard'},
-        {path:'/admin/users',name:'Manage Users'},
+        {path:'/admin/allusers',name:'Manage Users'},
         {path:'/admin/settings',name:'Settings'},
         {path:'/admin/packages',name:'Packages'},
         {path:'/admin/destinations',name:'Destinations List'},
-        {path:'/admin/dash',name:'Destination Dashboard'}
+        {path:'/admin/dash',name:'Destination Dashboard'},
+        {path:'/admin/destinations/create',name:'Create Destination'},
+        {path:'/admin/bookings',name:'Bookings'}
     ]
     return (
         <div>

@@ -11,7 +11,7 @@ export const getAllDestinationsAPI = async (params = {}) => {
 // Get destination by ID
 export const getDestinationByIdAPI = async (id) => {
   const res = await axiosInstance.get(`/destinations/${id}`);
-  console.log("get destination by id",res.data)
+  console.log("get destination by id",res.data.data)
   return res.data;
 };
 
@@ -59,7 +59,8 @@ export const getNearbyDestinationsAPI = async (destinationId, maxDistance = 100)
   const res = await axiosInstance.get(`/destinations/${destinationId}/nearby`, {
     params: { maxDistance }
   });
-  return res.data.destinations;
+  console.log("response from the nearby api",res.data.data)
+  return res.data.data;
 };
 
 // Get destination statistics
@@ -89,7 +90,7 @@ export const deleteDestinationAPI = async (id) => {
 // Add review to destination
 export const addDestinationReviewAPI = async (destinationId, reviewData) => {
   const res = await axiosInstance.post(`/destinations/${destinationId}/reviews`, reviewData);
-  return res.data.destination;
+  return res.data;
 };
 
 // Toggle featured status (Admin only)

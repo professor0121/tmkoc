@@ -76,7 +76,7 @@
 // export const { logout } = authSlice.actions;
 // export default authSlice.reducer;
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { loginAPI, registerAPI, meAPI } from './authAPI';
+import { loginAPI, registerAPI, meAPI, getAllUsersAPI } from './authAPI';
 
 const user = JSON.parse(localStorage.getItem('user'));
 
@@ -104,10 +104,19 @@ export const getUser = createAsyncThunk('auth/me', async (_, thunkAPI) => {
   }
 });
 
+export const getAllUsers = createAsyncThunk('auth/getAllUsers', async (_, thunkAPI) => {
+  try {
+    return await getAllUsersAPI();
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
+  }
+});
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user: user|| null,
+    user: user || null,
+    users: [],
     loading: false,
     error: null,
   },
@@ -166,8 +175,21 @@ const authSlice = createSlice({
         state.error = action.payload;
         state.user = null;
         localStorage.removeItem('user');
+      })
+      // Get All Users
+      .addCase(getAllUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload;
+      })
+      .addCase(getAllUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
-  },
+},
 });
 
 export const { logout } = authSlice.actions;

@@ -33,7 +33,9 @@ export const getDestinationById = createAsyncThunk(
   'destinations/getDestinationById',
   async (id, thunkAPI) => {
     try {
-      return await getDestinationByIdAPI(id);
+      const res = await getDestinationByIdAPI(id);
+      console.log(res.data)
+      return res.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
     }
@@ -154,7 +156,10 @@ export const addDestinationReview = createAsyncThunk(
   'destinations/addDestinationReview',
   async ({ destinationId, reviewData }, thunkAPI) => {
     try {
-      return await addDestinationReviewAPI(destinationId, reviewData);
+      
+      const res=await addDestinationReviewAPI(destinationId, reviewData);
+      console.log(res)
+      return res;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
     }

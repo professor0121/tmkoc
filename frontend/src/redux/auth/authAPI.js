@@ -16,3 +16,8 @@ export const meAPI =async () => {
   const res = await axiosInstance.get('/auth/me');
   return res.data.user;
 }
+
+export const getAllUsersAPI =async () => {
+  const res = await axiosInstance.get('/auth/allusers');
+  return res.data.data;
+}

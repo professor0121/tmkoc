@@ -1,5 +1,5 @@
 // src/components/destinations/DestinationDetail.jsx
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
@@ -9,6 +9,7 @@ import {
   clearCurrentDestination,
   clearError
 } from '../../redux/destinations/destinationSlice';
+import SmartBookingButton, { FloatingBookingButton } from '../bookings/SmartBookingButton';
 
 const DestinationDetail = () => {
   const { id } = useParams();
@@ -28,6 +29,7 @@ const DestinationDetail = () => {
   useEffect(() => {
     if (id) {
       dispatch(getDestinationById(id));
+      
       dispatch(getNearbyDestinations({ destinationId: id, maxDistance: 100 }));
     }
 
@@ -56,21 +58,21 @@ const DestinationDetail = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <span className="block sm:inline">{error}</span>
-          <button
-            onClick={() => dispatch(clearError())}
-            className="float-right text-red-500 hover:text-red-700"
-          >
-            ×
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="container mx-auto px-4 py-8">
+  //       <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+  //         <span className="block sm:inline">{error}</span>
+  //         <button
+  //           onClick={() => dispatch(clearError())}
+  //           className="float-right text-red-500 hover:text-red-700"
+  //         >
+  //           ×
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   if (!currentDestination) {
     return (
@@ -81,29 +83,44 @@ const DestinationDetail = () => {
   }
 
   const destination = currentDestination;
-
+  console.log("the destinations from details",destination)
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">{destination.name}</h1>
-        <p className="text-xl text-gray-600">
-          {destination.city}, {destination.state}, {destination.country}
-        </p>
-        <div className="flex items-center mt-2">
-          <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm mr-2">
-            {destination.category}
-          </span>
-          {destination.isFeatured && (
-            <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm mr-2">
-              Featured
-            </span>
-          )}
-          {destination.isPopular && (
-            <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-              Popular
-            </span>
-          )}
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start">
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">{destination.name}</h1>
+            <p className="text-xl text-gray-600">
+              {destination.city}, {destination.state}, {destination.country}
+            </p>
+            <div className="flex items-center mt-2">
+              <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm mr-2">
+                {destination.category}
+              </span>
+              {destination.isFeatured && (
+                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm mr-2">
+                  Featured
+                </span>
+              )}
+              {destination.isPopular && (
+                <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                  Popular
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Desktop Booking Button */}
+          <div className="mt-4 md:mt-0 md:ml-6 hidden md:block">
+            <SmartBookingButton
+              destination={destination}
+              size="lg"
+              className="shadow-lg"
+            >
+              Book This Destination
+            </SmartBookingButton>
+          </div>
         </div>
       </div>
 
@@ -169,7 +186,12 @@ const DestinationDetail = () => {
                   <strong>Best Months:</strong> {destination.climate.bestVisitMonths?.join(', ')}
                 </p>
                 <p className="mb-2">
-                  <strong>Temperature Range:</strong> {destination.climate.averageTemperature?.min}°C - {destination.climate.averageTemperature?.max}°C
+                  <strong>Temperature Range:</strong> {
+                    destination.climate.averageTemperature?.min !== undefined &&
+                    destination.climate.averageTemperature?.max !== undefined
+                      ? `${destination.climate.averageTemperature.min}°C - ${destination.climate.averageTemperature.max}°C`
+                      : 'Information not available'
+                  }
                 </p>
                 <p>
                   <strong>Rainfall:</strong> {destination.climate.rainfallPattern}
@@ -272,6 +294,30 @@ const DestinationDetail = () => {
 
         {/* Sidebar */}
         <div className="lg:col-span-1">
+          {/* Booking Card */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h3 className="text-lg font-semibold mb-4">Plan Your Trip</h3>
+            <p className="text-gray-600 mb-4">
+              Discover amazing packages and create custom trips to {destination.name}
+            </p>
+            <div className="space-y-3">
+              <SmartBookingButton
+                destination={destination}
+                className="w-full"
+                size="lg"
+              >
+                Book This Destination
+              </SmartBookingButton>
+
+              <button
+                onClick={() => window.location.href = `/book/custom/${destination._id}`}
+                className="w-full px-4 py-2 border border-green-300 text-green-700 rounded-md hover:bg-green-50 transition-colors"
+              >
+                Create Custom Trip
+              </button>
+            </div>
+          </div>
+
           {/* Rating */}
           {destination.rating && (
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -346,6 +392,9 @@ const DestinationDetail = () => {
           )}
         </div>
       </div>
+
+      {/* Mobile Floating Button */}
+      <FloatingBookingButton destination={destination} />
     </div>
   );
 };

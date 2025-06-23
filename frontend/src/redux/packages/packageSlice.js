@@ -102,4 +102,9 @@ const packageSlice = createSlice({
 });
 
 export const { clearSelectedPackage } = packageSlice.actions;
+
+// Alias exports for consistency with other slices
+export const getPackageById = fetchPackageById;
+export const getAllPackages = fetchPackages;
+
 export default packageSlice.reducer;

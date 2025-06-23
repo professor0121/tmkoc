@@ -1,7 +1,8 @@
 // src/components/destinations/FeaturedDestinations.jsx
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDestinations } from '../../hooks/useDestinations';
 import { useNavigate } from 'react-router-dom';
+import SmartBookingButton from '../bookings/SmartBookingButton';
 
 const FeaturedDestinations = () => {
   const {
@@ -134,12 +135,23 @@ const FeaturedDestinations = () => {
                     </div>
                   )}
 
-                  {/* Action Button */}
-                  <button
-                  onClick={()=>handleExploreBtn(destination._id)}
-                   className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200 font-medium">
-                    Explore Destination
-                  </button>
+                  {/* Action Buttons */}
+                  <div className="space-y-2">
+                    <SmartBookingButton
+                      destination={destination}
+                      className="w-full"
+                      size="md"
+                    >
+                      Book Now
+                    </SmartBookingButton>
+
+                    <button
+                      onClick={()=>handleExploreBtn(destination._id)}
+                      className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium border border-gray-300"
+                    >
+                      Explore Destination
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -149,7 +161,10 @@ const FeaturedDestinations = () => {
         {/* View All Button */}
         {featuredDestinations.length > 0 && (
           <div className="text-center mt-8">
-            <button className="bg-gray-800 text-white py-3 px-8 rounded-lg hover:bg-gray-900 transition-colors duration-200 font-medium">
+            <button
+              onClick={() => navigate('/destinations')}
+              className="bg-gray-800 text-white py-3 px-8 rounded-lg hover:bg-gray-900 transition-colors duration-200 font-medium"
+            >
               View All Destinations
             </button>
           </div>

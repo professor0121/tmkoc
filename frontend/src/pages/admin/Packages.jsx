@@ -6,8 +6,8 @@ const Packages = () => {
   return (
     <div>
         <PackagesList/>
-        <h1 className="text-2xl font-bold mb-4">Create Package</h1>
-        <CreatePackageForm/>
+        {/* <h1 className="text-2xl font-bold mb-4">Create Package</h1>
+        <CreatePackageForm/> */}
     </div>
   )
 }
