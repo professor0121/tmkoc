@@ -23,7 +23,7 @@ const AboutHero = () => {
           </p>
           
           {/* Key Highlights */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-black">
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6">
               <div className="text-3xl font-bold mb-2">10+</div>
               <div className="text-lg font-semibold mb-1">Years Experience</div>
