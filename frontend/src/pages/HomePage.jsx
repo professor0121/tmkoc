@@ -83,7 +83,9 @@ console.log("feateurefefdfde",featuredPackages)
                   {/* Package Image */}
                   <div className="relative h-64">
                     <img
-                      src={pkg.images?.[0] || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}
+                     // src={pkg.images?.[0] || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}
+                     src="https://source.unsplash.com/800x600/?beach,travel" 
+
                       alt={pkg.name || pkg.title}
                       className="w-full h-full object-cover"
                     />

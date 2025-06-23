@@ -2,6 +2,10 @@
 import HomePage from '../pages/HomePage';
 import Services from '../pages/Services';
 import AboutPage from '../pages/AboutPage';
+import ContactPage from '../pages/ContactPage';
+import HelpCenterPage from '../pages/HelpCenterPage';
+import TermsOfServicePage from '../pages/TermsOfServicePage';
+import PrivacyPolicyPage from '../pages/PrivacyPolicyPage';
 import AuthPage from '../pages/AuthPage';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import AdminUsers from '../pages/admin/AdminUsers';
@@ -29,6 +33,10 @@ const navRoutes = [
   { path: '/', element: <HomePage />, name: 'Home', showInNav: true },
   { path: '/services', element: <Services />, name: 'Services', showInNav: true },
   { path: '/about', element: <AboutPage />, name: 'About', showInNav: true },
+  { path: '/contact', element: <ContactPage />, name: 'Contact', showInNav: true },
+  { path: '/help', element: <HelpCenterPage />, name: 'Help Center', showInNav: false },
+  { path: '/terms', element: <TermsOfServicePage />, name: 'Terms of Service', showInNav: false },
+  { path: '/privacy', element: <PrivacyPolicyPage />, name: 'Privacy Policy', showInNav: false },
   { path: '/auth', element: <AuthPage />, name: 'Login/Register', showInNav: true },
   { path: '/logout', element: <LogoutPage />, name: 'Logout', showInNav: true },
   { path: '/packages', element: <Packages />, name: 'Packages', showInNav: true },
