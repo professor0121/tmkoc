@@ -1,54 +1,91 @@
 # TMKOC Tourism Backend
 
-A comprehensive Node.js backend application for tourism management built with Express.js, TypeScript, and MongoDB.
+A comprehensive Node.js backend application for tourism management built with Express.js, TypeScript, and MongoDB. This backend powers a full-featured tourism platform with advanced booking capabilities, content management, and analytics.
 
 ## 🚀 Features
 
-- **User Authentication & Authorization**: JWT-based auth with role management
-- **Package Management**: Complete CRUD operations for travel packages
-- **Destination Management**: Comprehensive destination database with reviews and ratings
-- **MongoDB Integration**: Robust database operations with Mongoose
+### Core Features
+- **User Authentication & Authorization**: JWT-based auth with role-based access control
+- **Package Management**: Complete CRUD operations for travel packages with advanced filtering
+- **Destination Management**: Comprehensive destination database with reviews, ratings, and geospatial queries
+- **Booking System**: Full booking lifecycle management with payment processing
+- **Blog Management**: Content management system with SEO optimization and rich media support
+- **MongoDB Integration**: Robust database operations with Mongoose ODM and optimized indexing
 - **TypeScript Support**: Full type safety and better development experience
-- **Middleware**: Authentication, validation, and error handling
-- **API Documentation**: Well-documented RESTful APIs
-- **Advanced Search**: Text search with filters and geospatial queries
-- **Review System**: User reviews and ratings for destinations and packages
-- **Analytics**: Statistics and insights for business intelligence
+- **Middleware**: Authentication, validation, error handling, and rate limiting
+- **API Documentation**: Well-documented RESTful APIs with comprehensive examples
+- **Advanced Search**: Full-text search with filters, geospatial queries, and pagination
+- **Review System**: User reviews and ratings for destinations, packages, and blogs
+- **Analytics**: Statistics and insights for business intelligence and reporting
+
+### Advanced Features
+- **Geospatial Queries**: Location-based searches and nearby destination finding
+- **Dynamic Pricing**: Real-time price calculation with taxes, fees, and discounts
+- **Multi-Traveler Support**: Booking system supporting adults, children, and infants
+- **SEO Optimization**: URL slugs, meta tags, and search engine friendly content
+- **File Upload**: Image and media management for destinations and packages
+- **Email Integration**: Booking confirmations and notifications
+- **Data Validation**: Comprehensive input validation and sanitization
+- **Error Handling**: Centralized error handling with detailed logging
+- **Security**: Password hashing, CORS protection, and input sanitization
 
 ## 📁 Project Structure
 
 ```
 backend/
 ├── src/
-│   ├── controllers/       # Request handlers
+│   ├── config/           # Configuration files
+│   │   ├── database.ts   # MongoDB connection setup
+│   │   └── cookieConfig.ts
+│   ├── controllers/      # Request handlers
 │   │   ├── auth.controller.ts
 │   │   ├── package.controller.ts
-│   │   └── destination.controller.ts
-│   ├── dao/              # Data Access Objects
+│   │   ├── destination.controller.ts
+│   │   ├── booking.controller.ts
+│   │   └── blog.controller.ts
+│   ├── dao/             # Data Access Objects
 │   │   ├── auth.dao.ts
 │   │   ├── package.dao.ts
-│   │   └── destination.dao.ts
-│   ├── middleware/       # Custom middleware
+│   │   ├── destination.dao.ts
+│   │   ├── booking.dao.ts
+│   │   └── blog.dao.ts
+│   ├── middleware/      # Custom middleware
 │   │   ├── auth.middleware.ts
 │   │   └── validation.middleware.ts
-│   ├── models/           # MongoDB schemas
+│   ├── models/          # MongoDB schemas
 │   │   ├── User.ts
 │   │   ├── Package.ts
-│   │   └── Destination.ts
-│   ├── routes/           # API routes
+│   │   ├── Destination.ts
+│   │   ├── Booking.ts
+│   │   └── Blog.ts
+│   ├── routes/          # API routes
 │   │   ├── auth.routes.ts
 │   │   ├── package.routes.ts
-│   │   └── destination.routes.ts
-│   ├── services/         # Business logic
+│   │   ├── destination.routes.ts
+│   │   ├── booking.routes.ts
+│   │   └── blog.routes.ts
+│   ├── services/        # Business logic
 │   │   ├── auth.service.ts
 │   │   ├── package.service.ts
-│   │   └── destination.service.ts
-│   ├── types/            # TypeScript interfaces
+│   │   ├── destination.service.ts
+│   │   ├── booking.service.ts
+│   │   └── blog.service.ts
+│   ├── types/           # TypeScript interfaces
 │   │   ├── auth.interface.ts
 │   │   ├── package.interface.ts
-│   │   └── destination.interface.ts
-│   ├── utils/            # Utility functions
-│   └── app.ts            # Express app configuration
+│   │   ├── destination.interface.ts
+│   │   ├── booking.interface.ts
+│   │   └── blog.interface.ts
+│   ├── utils/           # Utility functions
+│   │   ├── validation.ts
+│   │   ├── helpers.ts
+│   │   └── constants.ts
+│   ├── app.ts           # Express app configuration
+│   └── index.ts         # Application entry point
+├── docs/                # Additional documentation
+├── tests/               # Test files
+├── API_DOCUMENTATION.md # Complete API documentation
+├── README_BOOKING_SYSTEM.md # Booking system documentation
 ├── package.json
 └── README.md
 ```
@@ -80,15 +117,15 @@ backend/
 - `GET /api/auth/me` - Get current user
 
 ### Packages
-- `GET /api/packages` - Get all packages with filters
-- `GET /api/packages/search` - Search packages
+- `GET /api/packages` - Get all packages with filters and pagination
+- `GET /api/packages/search` - Search packages by text
 - `GET /api/packages/featured` - Get featured packages
 - `GET /api/packages/popular` - Get popular packages
 - `GET /api/packages/category/:category` - Get packages by category
 - `GET /api/packages/:id` - Get package by ID
-- `POST /api/packages` - Create package (admin)
-- `PUT /api/packages/:id` - Update package (admin)
-- `DELETE /api/packages/:id` - Delete package (admin)
+- `POST /api/packages` - Create package (admin only)
+- `PUT /api/packages/:id` - Update package (admin only)
+- `DELETE /api/packages/:id` - Delete package (admin only)
 
 ### Destinations
 - `GET /api/destinations` - Get all destinations with filters
@@ -104,6 +141,28 @@ backend/
 - `PUT /api/destinations/:id` - Update destination (admin)
 - `DELETE /api/destinations/:id` - Delete destination (admin)
 - `POST /api/destinations/:id/reviews` - Add review (authenticated)
+
+### Bookings
+- `GET /api/bookings` - Get user bookings (authenticated)
+- `GET /api/bookings/:id` - Get booking by ID (authenticated)
+- `POST /api/bookings` - Create new booking (authenticated)
+- `PUT /api/bookings/:id` - Update booking (authenticated)
+- `DELETE /api/bookings/:id` - Cancel booking (authenticated)
+- `POST /api/bookings/:id/payment` - Process payment (authenticated)
+- `GET /api/bookings/admin/all` - Get all bookings (admin only)
+- `GET /api/bookings/admin/statistics` - Get booking statistics (admin only)
+
+### Blogs
+- `GET /api/blogs/public` - Get published blogs with pagination
+- `GET /api/blogs/public/:slug` - Get blog by slug
+- `GET /api/blogs/public/:id/related` - Get related blogs
+- `POST /api/blogs/public/:id/like` - Like a blog post
+- `GET /api/blogs/categories` - Get blog categories with counts
+- `GET /api/blogs/tags/popular` - Get popular tags
+- `POST /api/blogs` - Create blog (admin only)
+- `PUT /api/blogs/:id` - Update blog (admin only)
+- `DELETE /api/blogs/:id` - Delete blog (admin only)
+- `GET /api/blogs/admin/all` - Get all blogs including drafts (admin only)
 
 ## 🔐 Authentication
 

@@ -1,20 +1,131 @@
-# TMKOC Backend API Documentation
+# TMKOC Tourism Management System - Comprehensive Documentation
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
-2. [Architecture Overview](#architecture-overview)
-3. [System Architecture Flow](#system-architecture-flow)
-4. [UML Diagrams](#uml-diagrams)
-5. [API Endpoints](#api-endpoints)
+2. [System Architecture](#system-architecture)
+3. [Technology Stack](#technology-stack)
+4. [Core Features](#core-features)
+5. [API Documentation](#api-documentation)
 6. [Database Schema](#database-schema)
-7. [Authentication Flow](#authentication-flow)
-8. [Configuration](#configuration)
-9. [Development Setup](#development-setup)
-10. [Testing](#testing)
+7. [Authentication & Security](#authentication--security)
+8. [Frontend Architecture](#frontend-architecture)
+9. [Deployment Guide](#deployment-guide)
+10. [Development Workflow](#development-workflow)
+11. [Testing Strategy](#testing-strategy)
+12. [Performance Optimization](#performance-optimization)
 
 ## Project Overview
 
-TMKOC Backend API is a Node.js/Express.js application built with TypeScript that provides authentication and user management services. The application uses MongoDB as the database and implements JWT-based authentication with secure cookie management.
+TMKOC Tourism Management System is a comprehensive full-stack application designed for managing tourism operations. Built with modern technologies, it provides a robust platform for travel agencies, tour operators, and tourism businesses to manage packages, destinations, bookings, and customer relationships.
+
+### Key Capabilities
+- **Complete Tourism Management**: End-to-end solution for tourism businesses
+- **Multi-Role Support**: Different interfaces for admins, agents, and customers
+- **Booking System**: Full booking lifecycle with payment integration
+- **Content Management**: Rich content management for destinations and packages
+- **Analytics & Reporting**: Business intelligence and performance metrics
+- **Mobile-Responsive**: Works seamlessly across all devices
+- **SEO Optimized**: Search engine friendly content and URLs
+- **Scalable Architecture**: Built to handle growing business needs
+
+## System Architecture
+
+### High-Level Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │    Backend      │    │    Database     │
+│   (React)       │◄──►│   (Node.js)     │◄──►│   (MongoDB)     │
+│                 │    │                 │    │                 │
+│ • React 18      │    │ • Express.js    │    │ • Collections   │
+│ • Redux Toolkit │    │ • TypeScript    │    │ • Indexes       │
+│ • Tailwind CSS  │    │ • JWT Auth      │    │ • Aggregations  │
+│ • Vite          │    │ • Mongoose      │    │ • Geospatial    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+### Backend Architecture (Layered)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        Routes Layer                         │
+│  • Authentication Routes  • Package Routes  • Blog Routes  │
+└─────────────────────────────────────────────────────────────┘
+                                │
+┌─────────────────────────────────────────────────────────────┐
+│                     Controllers Layer                      │
+│     • Request Handling  • Validation  • Response Format    │
+└─────────────────────────────────────────────────────────────┘
+                                │
+┌─────────────────────────────────────────────────────────────┐
+│                      Services Layer                        │
+│    • Business Logic  • Data Processing  • External APIs    │
+└─────────────────────────────────────────────────────────────┘
+                                │
+┌─────────────────────────────────────────────────────────────┐
+│                        DAO Layer                           │
+│      • Database Operations  • Query Building  • Caching    │
+└─────────────────────────────────────────────────────────────┘
+                                │
+┌─────────────────────────────────────────────────────────────┐
+│                      Database Layer                        │
+│        • MongoDB  • Mongoose ODM  • Data Validation        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Frontend Architecture (Component-Based)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                         App Layer                          │
+│     • Routing  • Authentication  • Global State Setup      │
+└─────────────────────────────────────────────────────────────┘
+                                │
+┌─────────────────────────────────────────────────────────────┐
+│                        Pages Layer                         │
+│    • Route Components  • Layout Management  • Data Fetching │
+└─────────────────────────────────────────────────────────────┘
+                                │
+┌─────────────────────────────────────────────────────────────┐
+│                     Components Layer                       │
+│   • Reusable UI  • Business Logic  • State Management      │
+└─────────────────────────────────────────────────────────────┘
+                                │
+┌─────────────────────────────────────────────────────────────┐
+│                      Services Layer                        │
+│      • API Calls  • Data Transformation  • Error Handling  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Technology Stack
+
+### Backend Technologies
+- **Runtime**: Node.js (v16+)
+- **Framework**: Express.js
+- **Language**: TypeScript
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: JWT with HTTP-only cookies
+- **Validation**: Mongoose schemas + custom middleware
+- **Security**: bcryptjs, CORS, helmet
+- **Documentation**: Comprehensive API docs
+
+### Frontend Technologies
+- **Framework**: React 18
+- **Build Tool**: Vite
+- **Language**: JavaScript/TypeScript
+- **State Management**: Redux Toolkit
+- **Routing**: React Router DOM
+- **Styling**: Tailwind CSS
+- **HTTP Client**: Axios
+- **UI Components**: Custom components + Headless UI
+
+### Development Tools
+- **Version Control**: Git
+- **Package Manager**: npm
+- **Code Quality**: ESLint, Prettier
+- **Testing**: Jest, React Testing Library
+- **API Testing**: Postman, custom scripts
+- **Documentation**: Markdown, JSDoc
 
 ### Tech Stack
 - **Runtime**: Node.js

@@ -2,9 +2,21 @@
 
 ## Overview
 
-The TMKOC Tourism API provides comprehensive endpoints for managing tourism operations including user authentication, package management, and destination information.
+The TMKOC Tourism API is a comprehensive RESTful API for managing tourism operations. It provides endpoints for user authentication, package management, destination information, booking system, blog management, and administrative functions.
 
 **Base URL**: `http://localhost:3000/api`
+**Version**: 1.0.0
+**Last Updated**: December 2024
+
+### API Features
+- **RESTful Design**: Follows REST principles with consistent URL patterns
+- **JSON Responses**: All responses in JSON format with consistent structure
+- **Authentication**: JWT-based authentication with role-based access control
+- **Pagination**: Built-in pagination for list endpoints
+- **Filtering**: Advanced filtering and search capabilities
+- **Error Handling**: Comprehensive error responses with detailed messages
+- **Rate Limiting**: Protection against abuse with configurable limits
+- **CORS Support**: Cross-origin resource sharing for frontend integration
 
 ## Authentication
 
@@ -402,6 +414,239 @@ PATCH /api/destinations/:id/featured
   "featured": true
 }
 ```
+
+### Blog Endpoints
+
+#### Get Published Blogs
+```
+GET /api/blogs/public
+```
+
+**Query Parameters:**
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 10)
+- `category`: Filter by category
+- `tags`: Filter by tags (comma-separated)
+- `author`: Filter by author ID
+- `sort`: Sort by (createdAt, views, likes, title)
+
+#### Get Blog by Slug
+```
+GET /api/blogs/public/:slug
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "blog": {
+      "id": "blog_id",
+      "title": "Amazing Travel Destination",
+      "slug": "amazing-travel-destination",
+      "content": "Full blog content...",
+      "author": {
+        "name": "John Doe",
+        "email": "john@example.com"
+      },
+      "category": "travel-tips",
+      "tags": ["travel", "tips", "adventure"],
+      "views": 1250,
+      "likes": 45,
+      "createdAt": "2024-01-15T10:30:00Z"
+    }
+  }
+}
+```
+
+#### Get Related Blogs
+```
+GET /api/blogs/public/:id/related?limit=5
+```
+
+#### Like Blog Post
+```
+POST /api/blogs/public/:id/like
+```
+*Optional authentication for tracking*
+
+#### Get Blog Categories
+```
+GET /api/blogs/categories
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "category": "travel-tips",
+      "count": 25,
+      "description": "Helpful travel tips and advice"
+    },
+    {
+      "category": "destinations",
+      "count": 40,
+      "description": "Destination guides and reviews"
+    }
+  ]
+}
+```
+
+#### Get Popular Tags
+```
+GET /api/blogs/tags/popular?limit=20
+```
+
+#### Create Blog (Admin Only)
+```
+POST /api/blogs
+```
+*Requires admin authentication*
+
+**Request Body:**
+```json
+{
+  "title": "Ultimate Guide to Himalayan Trekking",
+  "content": "Comprehensive guide content...",
+  "shortDescription": "Everything you need to know about Himalayan trekking",
+  "category": "adventure",
+  "tags": ["himalaya", "trekking", "adventure", "guide"],
+  "featuredImage": {
+    "url": "https://example.com/image.jpg",
+    "alt": "Himalayan mountains"
+  },
+  "seo": {
+    "metaTitle": "Ultimate Himalayan Trekking Guide | TMKOC Tourism",
+    "metaDescription": "Complete guide to Himalayan trekking with tips, routes, and safety advice.",
+    "keywords": ["himalaya", "trekking", "adventure", "mountains"]
+  },
+  "status": "published"
+}
+```
+
+#### Update Blog (Admin Only)
+```
+PUT /api/blogs/:id
+```
+*Requires admin authentication*
+
+#### Delete Blog (Admin Only)
+```
+DELETE /api/blogs/:id
+```
+*Requires admin authentication*
+
+### Booking Endpoints
+
+#### Get User Bookings
+```
+GET /api/bookings
+```
+*Requires authentication*
+
+**Query Parameters:**
+- `status`: Filter by booking status
+- `page`: Page number
+- `limit`: Items per page
+
+#### Get Booking by ID
+```
+GET /api/bookings/:id
+```
+*Requires authentication*
+
+#### Create Booking
+```
+POST /api/bookings
+```
+*Requires authentication*
+
+**Request Body:**
+```json
+{
+  "package": "package_id",
+  "destination": "destination_id",
+  "bookingDetails": {
+    "travelers": {
+      "adults": 2,
+      "children": 1,
+      "infants": 0
+    },
+    "travelDates": {
+      "startDate": "2024-06-15",
+      "endDate": "2024-06-22"
+    },
+    "accommodation": {
+      "type": "midRange",
+      "roomType": "deluxe",
+      "rooms": 1
+    },
+    "transportation": {
+      "flightRequired": true,
+      "flightDetails": {
+        "departure": "DEL",
+        "arrival": "GOI",
+        "class": "economy"
+      }
+    }
+  },
+  "pricing": {
+    "basePrice": 25000,
+    "totalAmount": 28500,
+    "currency": "USD"
+  },
+  "emergencyContact": {
+    "name": "Jane Doe",
+    "phone": "+1234567890",
+    "email": "jane@example.com"
+  }
+}
+```
+
+#### Update Booking
+```
+PUT /api/bookings/:id
+```
+*Requires authentication*
+
+#### Cancel Booking
+```
+DELETE /api/bookings/:id
+```
+*Requires authentication*
+
+#### Process Payment
+```
+POST /api/bookings/:id/payment
+```
+*Requires authentication*
+
+**Request Body:**
+```json
+{
+  "amount": 28500,
+  "paymentMethod": "credit_card",
+  "paymentDetails": {
+    "cardNumber": "****-****-****-1234",
+    "expiryDate": "12/25",
+    "cvv": "***"
+  }
+}
+```
+
+#### Get All Bookings (Admin Only)
+```
+GET /api/bookings/admin/all
+```
+*Requires admin authentication*
+
+#### Get Booking Statistics (Admin Only)
+```
+GET /api/bookings/admin/statistics
+```
+*Requires admin authentication*
 
 ## Advanced Features
 
