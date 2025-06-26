@@ -2,40 +2,46 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBlogCategories, fetchPopularTags } from '../../../redux/blogs/blogSlice';
-import axiosInstance from '../../../axios/axiosInstance';
+import {
+  fetchBlogCategories,
+  fetchPopularTags,
+  createBlog,
+  updateBlog,
+  uploadBlogImage
+} from '../../../redux/blogs/blogSlice';
 import RichTextEditor from './RichTextEditor';
 import BlogPreview from './BlogPreview';
 
 const BlogForm = ({ isEdit = false, blogData = null }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const blogCategorites=[
-        'Travel Tips',
-        'Destinations',
-        'Food & Culture',
-        'Adventure',
-        'Budget Travel',
-        'Luxury Travel',
-        'Solo Travel',
-        'Family Travel',
-        'Business Travel',
-        'Travel News',
-        'Travel Guides',
-        'Photography'
-      ]
+  const blogCategories = [
+    { value: 'Travel Tips', label: 'Travel Tips' },
+    { value: 'Destinations', label: 'Destinations' },
+    { value: 'Food & Culture', label: 'Food & Culture' },
+    { value: 'Adventure', label: 'Adventure' },
+    { value: 'Budget Travel', label: 'Budget Travel' },
+    { value: 'Luxury Travel', label: 'Luxury Travel' },
+    { value: 'Solo Travel', label: 'Solo Travel' },
+    { value: 'Family Travel', label: 'Family Travel' },
+    { value: 'Business Travel', label: 'Business Travel' },
+    { value: 'Travel News', label: 'Travel News' },
+    { value: 'Travel Guides', label: 'Travel Guides' },
+    { value: 'Photography', label: 'Photography' }
+  ];
 
-  const { categories, popularTags } = useSelector((state) => state.blogs);
+  const { popularTags, loading: blogLoading, error: blogError } = useSelector((state) => state.blogs);
 
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
-    excerpt: '',
+    excerpt: '', // Keep excerpt as per your data structure
     content: '',
-    featuredImage: '',
+    featuredImage: '', // Keep as string URL as per your data structure
     category: '',
     tags: [],
     status: 'draft',
+    readTime: 0, // Add readTime field
     seo: {
       metaTitle: '',
       metaDescription: '',
@@ -66,6 +72,7 @@ const BlogForm = ({ isEdit = false, blogData = null }) => {
         category: blogData.category || '',
         tags: blogData.tags || [],
         status: blogData.status || 'draft',
+        readTime: blogData.readTime || 0,
         seo: {
           metaTitle: blogData.seo?.metaTitle || '',
           metaDescription: blogData.seo?.metaDescription || '',
@@ -150,48 +157,65 @@ const BlogForm = ({ isEdit = false, blogData = null }) => {
     }
   };
 
+  // Calculate read time based on content
+  const calculateReadTime = (content) => {
+    const wordsPerMinute = 200;
+    const words = content.trim().split(/\s+/).length;
+    return Math.ceil(words / wordsPerMinute);
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.title.trim()) newErrors.title = 'Title is required';
-    if (!formData.excerpt.trim()) newErrors.excerpt = 'Excerpt is required';
-    if (!formData.content.trim()) newErrors.content = 'Content is required';
-    if (!formData.category) newErrors.category = 'Category is required';
-    if (!formData.featuredImage.trim()) newErrors.featuredImage = 'Featured image is required';
+    // if (!formData.title.trim()) newErrors.title = 'Title is required';
+    // if (!formData.excerpt.trim()) newErrors.excerpt = 'Excerpt is required';
+    // if (!formData.content.trim()) newErrors.content = 'Content is required';
+    // if (!formData.category) newErrors.category = 'Category is required';
+    // if (!formData.featuredImage.trim()) newErrors.featuredImage = 'Featured image is required';
 
-    if (formData.title.length > 200) newErrors.title = 'Title must be less than 200 characters';
-    if (formData.excerpt.length > 500) newErrors.excerpt = 'Excerpt must be less than 500 characters';
-    if (formData.content.length < 100) newErrors.content = 'Content must be at least 100 characters';
+    // if (formData.title.length > 200) newErrors.title = 'Title must be less than 200 characters';
+    // if (formData.excerpt.length > 500) newErrors.excerpt = 'Excerpt must be less than 500 characters';
+    // if (formData.content.length < 100) newErrors.content = 'Content must be at least 100 characters';
 
-    setErrors(newErrors);
+    // setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setLoading(true);
     try {
       const submitData = {
         ...formData,
-        author: JSON.parse(localStorage.getItem('user'))?.id // Get current user ID
+        // Calculate read time automatically
+        readTime: calculateReadTime(formData.content),
+        // Convert tags array to ensure it's properly formatted
+        tags: formData.tags.filter(tag => tag.trim()),
+        // Ensure SEO keywords is an array
+        seo: {
+          ...formData.seo,
+          keywords: Array.isArray(formData.seo.keywords)
+            ? formData.seo.keywords
+            : formData.seo.keywords.split(',').map(k => k.trim()).filter(k => k)
+        }
       };
 
-      let response;
+      // Log the data structure for debugging
+      console.log('Blog data being submitted:', JSON.stringify(submitData, null, 2));
+
       if (isEdit) {
-        response = await axiosInstance.put(`/blogs/${blogData._id}`, submitData);
+        await dispatch(updateBlog({ blogId: blogData._id, blogData: submitData })).unwrap();
       } else {
-        response = await axiosInstance.post('/blogs', submitData);
+        await dispatch(createBlog(submitData)).unwrap();
       }
 
-      if (response.data.success) {
-        navigate('/admin/blogs');
-      }
+      navigate('/admin/blogs');
     } catch (error) {
       console.error('Error saving blog:', error);
-      setErrors({ submit: error.response?.data?.message || 'Failed to save blog' });
+      setErrors({ submit: error || 'Failed to save blog' });
     } finally {
       setLoading(false);
     }
@@ -291,16 +315,11 @@ const BlogForm = ({ isEdit = false, blogData = null }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Select a category</option>
-              {blogCategorites.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat} 
+              {blogCategories.map((cat) => (
+                <option key={cat.value} value={cat.value}>
+                  {cat.label}
                 </option>
               ))}
-              {/* {categories.map((cat) => (
-                <option key={cat.category} value={cat.category}>
-                  {cat.category} 
-                </option>
-              ))} */}
             </select>
             {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category}</p>}
           </div>
@@ -335,7 +354,7 @@ const BlogForm = ({ isEdit = false, blogData = null }) => {
               placeholder="Write your blog content here... You can use markdown formatting."
             />
             <p className="mt-1 text-sm text-gray-500">
-              {formData.content.length} characters (minimum 100)
+              {formData.content.length} characters (minimum 100) • Estimated read time: {calculateReadTime(formData.content)} min
             </p>
             {errors.content && <p className="mt-1 text-sm text-red-600">{errors.content}</p>}
           </div>

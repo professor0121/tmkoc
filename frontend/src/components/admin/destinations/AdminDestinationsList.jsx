@@ -14,6 +14,9 @@ const AdminDestinationsList = () => {
   const { destinations, loading, error } = useSelector((state) => state.destinations);
   const { user } = useSelector((state) => state.auth);
 
+  // Debug log to check destinations data
+  console.log('Destinations data:', destinations, 'Type:', typeof destinations, 'Is Array:', Array.isArray(destinations));
+
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -31,14 +34,19 @@ const AdminDestinationsList = () => {
   }, [dispatch, user]);
 
   // Filter destinations based on search and filters
-  const filteredDestinations = destinations.filter(destination => {
+  const filteredDestinations = (destinations || []).filter(destination => {
+    // Check if destination exists and has required properties
+    if (!destination || !destination.name || !destination.city || !destination.country) {
+      return false;
+    }
+
     const matchesSearch = destination.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          destination.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          destination.country.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesCategory = !categoryFilter || destination.category === categoryFilter;
-    
-    const matchesStatus = statusFilter === 'all' || 
+
+    const matchesStatus = statusFilter === 'all' ||
                          (statusFilter === 'active' && destination.isActive) ||
                          (statusFilter === 'inactive' && !destination.isActive) ||
                          (statusFilter === 'featured' && destination.isFeatured) ||
@@ -49,15 +57,23 @@ const AdminDestinationsList = () => {
 
   const handleDelete = async (id) => {
     if (deleteConfirm === id) {
-      await dispatch(deleteDestination(id));
-      setDeleteConfirm(null);
+      try {
+        await dispatch(deleteDestination(id)).unwrap();
+        setDeleteConfirm(null);
+      } catch (error) {
+        console.error('Failed to delete destination:', error);
+      }
     } else {
       setDeleteConfirm(id);
     }
   };
 
   const handleToggleFeatured = async (id, currentStatus) => {
-    await dispatch(toggleFeaturedStatus({ id, featured: !currentStatus }));
+    try {
+      await dispatch(toggleFeaturedStatus({ id, featured: !currentStatus })).unwrap();
+    } catch (error) {
+      console.error('Failed to toggle featured status:', error);
+    }
   };
 
   if (!user || user.role !== 'admin') {
@@ -65,6 +81,35 @@ const AdminDestinationsList = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
           Access denied. Admin privileges required.
+        </div>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading destinations...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if destinations array is valid
+  if (!destinations || !Array.isArray(destinations)) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center py-8">
+          <p className="text-gray-600">No destinations data available.</p>
+          <button
+            onClick={() => dispatch(getAllDestinations())}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Load Destinations
+          </button>
         </div>
       </div>
     );

@@ -13,7 +13,11 @@ import {
   searchBlogPosts,
   getBlogCategoriesWithCounts,
   getPopularBlogTags,
-  getRelatedBlogPosts
+  getRelatedBlogPosts,
+  uploadBlogImage,
+  bulkDeleteBlogs,
+  updateBlogStatus,
+  getBlogStatistics
 } from '../controllers/blog.controller';
 import { authMiddleware, checkRole, optionalAuth } from '../middleware/auth.middleware';
 import {
@@ -129,5 +133,33 @@ router.put('/:id', ...validateBlogId, ...validateUpdateBlog, checkRole('admin'),
  * @access Admin only
  */
 router.delete('/:id', ...validateBlogId, checkRole('admin'), deleteBlogPost);
+
+/**
+ * @route POST /api/blogs/upload-image
+ * @desc Upload blog image
+ * @access Admin only
+ */
+router.post('/upload-image', checkRole('admin'), uploadBlogImage);
+
+/**
+ * @route DELETE /api/blogs/bulk
+ * @desc Bulk delete blog posts
+ * @access Admin only
+ */
+router.delete('/bulk', checkRole('admin'), bulkDeleteBlogs);
+
+/**
+ * @route PATCH /api/blogs/:id/status
+ * @desc Update blog status
+ * @access Admin only
+ */
+router.patch('/:id/status', ...validateBlogId, checkRole('admin'), updateBlogStatus);
+
+/**
+ * @route GET /api/blogs/statistics
+ * @desc Get blog statistics
+ * @access Admin only
+ */
+router.get('/statistics', checkRole('admin'), getBlogStatistics);
 
 export default router;

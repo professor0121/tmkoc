@@ -366,7 +366,7 @@ export const searchBlogPosts = async (req: Request, res: Response): Promise<void
 /**
  * Get blog categories with post counts
  */
-export const getBlogCategoriesWithCounts = async (req: Request, res: Response): Promise<void> => {
+export const getBlogCategoriesWithCounts = async (_req: Request, res: Response): Promise<void> => {
   try {
     const categories = await getBlogCategories();
     console.log("categories",categories)
@@ -425,6 +425,171 @@ export const getRelatedBlogPosts = async (req: Request, res: Response): Promise<
     res.status(500).json({
       success: false,
       message: 'Failed to retrieve related blogs',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Upload blog image
+ */
+export const uploadBlogImage = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // This would typically use multer middleware for file upload
+    // For now, we'll simulate the upload process
+    const { file } = req.body;
+
+    if (!file) {
+      res.status(400).json({
+        success: false,
+        message: 'No image file provided'
+      });
+      return;
+    }
+
+    // In a real implementation, you would:
+    // 1. Validate file type and size
+    // 2. Upload to cloud storage (AWS S3, Cloudinary, etc.)
+    // 3. Return the uploaded image URL
+
+    const imageUrl = `https://example.com/uploads/${Date.now()}-${file.name}`;
+
+    res.status(200).json({
+      success: true,
+      message: 'Image uploaded successfully',
+      data: {
+        imageUrl,
+        fileName: file.name,
+        fileSize: file.size
+      }
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to upload image',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Bulk delete blog posts
+ */
+export const bulkDeleteBlogs = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { blogIds } = req.body;
+
+    if (!blogIds || !Array.isArray(blogIds) || blogIds.length === 0) {
+      res.status(400).json({
+        success: false,
+        message: 'Blog IDs array is required'
+      });
+      return;
+    }
+
+    // Delete multiple blogs
+    const deletePromises = blogIds.map(id => deleteBlogById(id));
+    await Promise.all(deletePromises);
+
+    res.status(200).json({
+      success: true,
+      message: `${blogIds.length} blogs deleted successfully`,
+      data: {
+        deletedCount: blogIds.length,
+        deletedIds: blogIds
+      }
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete blogs',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Update blog status
+ */
+export const updateBlogStatus = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status || !['draft', 'published', 'archived'].includes(status)) {
+      res.status(400).json({
+        success: false,
+        message: 'Valid status is required (draft, published, archived)'
+      });
+      return;
+    }
+
+    const updatedBlog = await updateBlogById(id, { status });
+
+    if (!updatedBlog) {
+      res.status(404).json({
+        success: false,
+        message: 'Blog not found'
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Blog status updated successfully',
+      data: updatedBlog
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update blog status',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Get blog statistics
+ */
+export const getBlogStatistics = async (_req: Request, res: Response): Promise<void> => {
+  try {
+    // Get various blog statistics
+    const totalBlogs = await getAllBlogs({}).then(result => result.total);
+    const publishedBlogs = await getPublishedBlogs({}).then(result => result.total);
+    const draftBlogs = await getAllBlogs({ status: 'draft' }).then(result => result.total);
+    const categories = await getBlogCategories();
+    const popularTags = await getPopularTags(10);
+
+    // Calculate additional statistics
+    const totalViews = await getAllBlogs({}).then(result =>
+      result.blogs.reduce((sum, blog) => sum + (blog.views || 0), 0)
+    );
+    const totalLikes = await getAllBlogs({}).then(result =>
+      result.blogs.reduce((sum, blog) => sum + (blog.likes || 0), 0)
+    );
+
+    const statistics = {
+      totalBlogs,
+      publishedBlogs,
+      draftBlogs,
+      archivedBlogs: totalBlogs - publishedBlogs - draftBlogs,
+      totalViews,
+      totalLikes,
+      categoriesCount: categories.length,
+      tagsCount: popularTags.length,
+      averageViewsPerBlog: totalBlogs > 0 ? Math.round(totalViews / totalBlogs) : 0,
+      averageLikesPerBlog: totalBlogs > 0 ? Math.round(totalLikes / totalBlogs) : 0
+    };
+
+    res.status(200).json({
+      success: true,
+      message: 'Blog statistics retrieved successfully',
+      data: statistics
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve blog statistics',
       error: error.message
     });
   }

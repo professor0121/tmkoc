@@ -10,6 +10,8 @@ import {
   clearError
 } from '../../redux/destinations/destinationSlice';
 import SmartBookingButton, { FloatingBookingButton } from '../bookings/SmartBookingButton';
+import Header from '../Header';
+import Footer from '../home/Footer';
 
 const DestinationDetail = () => {
   const { id } = useParams();
@@ -85,6 +87,9 @@ const DestinationDetail = () => {
   const destination = currentDestination;
   console.log("the destinations from details",destination)
   return (
+    <div>
+      <Header/>
+
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
@@ -395,6 +400,8 @@ const DestinationDetail = () => {
 
       {/* Mobile Floating Button */}
       <FloatingBookingButton destination={destination} />
+    </div>
+    <Footer/>
     </div>
   );
 };

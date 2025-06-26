@@ -18,9 +18,10 @@ export const fetchPackages = createAsyncThunk('packages/fetchAll', async (_, thu
 
 export const createPackage = createAsyncThunk('packages/create', async (data, thunkAPI) => {
   try {
-    // console.log("data in createPackage",data)
+    console.log("data in createPackage",data)
     return await createPackageAPI(data);
   } catch (err) {
+    console.log(err)
     return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
   }
 });

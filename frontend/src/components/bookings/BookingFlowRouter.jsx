@@ -303,10 +303,13 @@ export const useBookingNavigation = () => {
   
   const navigateToBooking = (type, id, destinationId = null) => {
     const url = generateBookingUrl(type, id, destinationId);
-    
+    console.log('navigateToBooking called:', { type, id, destinationId, url, user });
+
     if (!user) {
+      console.log('User not logged in, redirecting to auth');
       navigate(`/auth?redirect=${encodeURIComponent(url)}`);
     } else {
+      console.log('Navigating to booking URL:', url);
       navigate(url);
     }
   };

@@ -43,33 +43,40 @@ const SmartBookingButton = ({
   };
 
   const handleClick = () => {
+    console.log('SmartBookingButton clicked!', { destination, packageData, user, showModal, directBooking });
+
     // If user is not logged in, redirect to auth first
     if (!user) {
       const bookingUrl = generateBookingUrl();
+      console.log('User not logged in, redirecting to auth with URL:', bookingUrl);
       window.location.href = `/auth?redirect=${encodeURIComponent(bookingUrl)}`;
       return;
     }
 
     // Direct booking without modal
     if (directBooking) {
+      console.log('Direct booking mode');
       handleDirectBooking();
       return;
     }
 
     // Show selection modal for destinations or when multiple options exist
     if (showModal && (destination || (!packageData && !destination))) {
+      console.log('Showing selection modal');
       setShowSelectionModal(true);
       return;
     }
 
     // Direct package booking
     if (packageData) {
+      console.log('Direct package booking:', packageData._id, destination?._id);
       navigateToBooking('package', packageData._id, destination?._id);
       return;
     }
 
     // Default to destination booking
     if (destination) {
+      console.log('Default destination booking:', destination._id);
       navigateToBooking('destination', destination._id);
     }
   };

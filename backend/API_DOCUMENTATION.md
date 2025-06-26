@@ -648,6 +648,109 @@ GET /api/bookings/admin/statistics
 ```
 *Requires admin authentication*
 
+#### Upload Blog Image (Admin Only)
+```
+POST /api/blogs/upload-image
+```
+*Requires admin authentication*
+
+**Request Body (multipart/form-data):**
+```
+image: File (required)
+blogId: String (optional)
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Image uploaded successfully",
+  "data": {
+    "imageUrl": "https://example.com/uploads/1234567890-image.jpg",
+    "fileName": "image.jpg",
+    "fileSize": 1024000
+  }
+}
+```
+
+#### Bulk Delete Blogs (Admin Only)
+```
+DELETE /api/blogs/bulk
+```
+*Requires admin authentication*
+
+**Request Body:**
+```json
+{
+  "blogIds": ["blog_id_1", "blog_id_2", "blog_id_3"]
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "3 blogs deleted successfully",
+  "data": {
+    "deletedCount": 3,
+    "deletedIds": ["blog_id_1", "blog_id_2", "blog_id_3"]
+  }
+}
+```
+
+#### Update Blog Status (Admin Only)
+```
+PATCH /api/blogs/:id/status
+```
+*Requires admin authentication*
+
+**Request Body:**
+```json
+{
+  "status": "published"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Blog status updated successfully",
+  "data": {
+    "id": "blog_id",
+    "title": "Blog Title",
+    "status": "published",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+#### Get Blog Statistics (Admin Only)
+```
+GET /api/blogs/statistics
+```
+*Requires admin authentication*
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Blog statistics retrieved successfully",
+  "data": {
+    "totalBlogs": 150,
+    "publishedBlogs": 120,
+    "draftBlogs": 25,
+    "archivedBlogs": 5,
+    "totalViews": 45000,
+    "totalLikes": 3200,
+    "categoriesCount": 8,
+    "tagsCount": 45,
+    "averageViewsPerBlog": 300,
+    "averageLikesPerBlog": 21
+  }
+}
+```
+
 ## Advanced Features
 
 ### Geospatial Queries

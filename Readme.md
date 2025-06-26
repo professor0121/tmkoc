@@ -287,6 +287,10 @@ tmkoc/
 - `POST /api/blogs` - Create blog (admin only)
 - `PUT /api/blogs/:id` - Update blog (admin only)
 - `DELETE /api/blogs/:id` - Delete blog (admin only)
+- `POST /api/blogs/upload-image` - Upload blog image (admin only)
+- `DELETE /api/blogs/bulk` - Bulk delete blogs (admin only)
+- `PATCH /api/blogs/:id/status` - Update blog status (admin only)
+- `GET /api/blogs/statistics` - Get blog statistics (admin only)
 
 ### Health Check
 - `GET /` - Server status and health check
